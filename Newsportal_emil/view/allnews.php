@@ -1,16 +1,51 @@
 <?php
-ob_start();
-?>
 
-<h1>Kõik uudised</h1>
+class ViewNews
+{
+    public static function NewsByCategory($arr)
+    {
+        foreach ($arr as $value) {
 
-<br>
+            echo '<img src="data:image/jpeg;base64,' .
+                base64_encode($value['picture']) .
+                '" width="150">';
 
-<?php
+            echo '<h2>' . $value['title'] . '</h2>';
 
-ViewNews::AllNews($arr);
+            Controller::CommentsCount($value['id']);
 
-$content = ob_get_clean();
+            echo '<br>';
 
-include_once 'view/layout.php';
-?>
+            echo '<a href="news?id=' .
+                $value['id'] .
+                '">Edasi</a><br>';
+        }
+    }
+
+    public static function AllNews($arr)
+    {
+        foreach ($arr as $value) {
+
+            echo '<h2>' . $value['title'] . '</h2>';
+
+            Controller::CommentsCount($value['id']);
+
+            echo '<br>';
+
+            echo '<a href="news?id=' .
+                $value['id'] .
+                '">Edasi</a><br>';
+        }
+    }
+
+    public static function ReadNews($n)
+    {
+        echo '<h2>' . $n['title'] . '</h2>';
+
+        echo '<img src="data:image/jpeg;base64,' .
+            base64_encode($n['picture']) .
+            '" width="150">';
+
+        echo '<p>' . $n['text'] . '</p>';
+    }
+}

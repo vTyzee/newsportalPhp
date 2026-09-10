@@ -27,7 +27,13 @@ class Database
                 $this->password,
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
-        } catch (Exception $e) {
+
+            $this->conn->setAttribute(
+                PDO::ATTR_ERRMODE,
+                PDO::ERRMODE_EXCEPTION
+            );
+
+        } catch (PDOException $e) {
             echo "Connection failed: " . $e->getMessage();
         }
 
@@ -39,30 +45,32 @@ class Database
         $this->conn = null;
     }
 
-    function getOne($query)
+    function getOne($query, $params = [])
     {
         $stmt = $this->conn->prepare($query);
-        $stmt->execute();
+        $stmt->execute($params);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
         $response = $stmt->fetch();
 
         return $response;
     }
 
-    function getAll($query)
+    function getAll($query, $params = [])
     {
         $stmt = $this->conn->prepare($query);
-        $stmt->execute();
+        $stmt->execute($params);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
         $response = $stmt->fetchAll();
 
         return $response;
     }
 
-    function executeRun($query)
+    function executeRun($query, $params = [])
     {
-        $response = $this->conn->exec($query);
+        $stmt = $this->conn->prepare($query);
 
-        return $response;
+        return $stmt->execute($params);
     }
 }
